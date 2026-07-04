@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineering Academy — Build Production-Ready AI Applications in 8 Weeks</title>
+<meta name="description" content="A practical, engineering-first cohort for software engineers who want to build and ship real AI applications — not toy demos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#090c11;
+    --ink-1:#0f141b;
+    --ink-2:#161c26;
+    --ink-3:#1e2530;
+    --border:#242c39;
+    --border-soft:#1a212c;
+    --text:#eef1f5;
+    --text-dim:#aab3c2;
+    --text-mute:#707c8f;
+    --cyan:#5eead4;
+    --cyan-dim:#2f6f66;
+    --amber:#f0b429;
+    --red:#ef6461;
+    --radius:10px;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --maxw:1160px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+
+  /* Background texture: faint grid, engineer's graph-paper feel */
+  .bg-grid{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.028) 1px, transparent 1px);
+    background-size:42px 42px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 90%);
+            mask-image:radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 90%);
+  }
+
+  /* ---------- Nav ---------- */
+  header.site-nav{
+    position:sticky; top:0; z-index:100;
+    background:rgba(9,12,17,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    height:66px;
+  }
+  .brand{
+    font-family:var(--mono); font-weight:700; font-size:15px;
+    letter-spacing:0.02em; display:flex; align-items:center; gap:9px;
+    text-decoration:none; color:var(--text);
+  }
+  .brand .cursor{
+    display:inline-block; width:9px; height:16px; background:var(--cyan);
+    animation:blink 1.1s steps(1) infinite;
+    box-shadow:0 0 10px rgba(94,234,212,0.6);
+  }
+  @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+
+  nav.links{display:flex; gap:32px; align-items:center;}
+  nav.links a{
+    font-size:14px; color:var(--text-dim); text-decoration:none; font-weight:500;
+    transition:color .15s ease;
+  }
+  nav.links a:hover{color:var(--text);}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-weight:600; font-size:13.5px;
+    padding:11px 20px; border-radius:7px; text-decoration:none;
+    border:1px solid transparent; cursor:pointer; white-space:nowrap;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--cyan); color:#06201c; box-shadow:0 0 0 rgba(94,234,212,0);}
+  .btn-primary:hover{box-shadow:0 6px 24px rgba(94,234,212,0.28);}
+  .btn-ghost{background:transparent; border-color:var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--cyan-dim); background:rgba(94,234,212,0.06);}
+  .btn-block{width:100%; justify-content:center;}
+
+  .nav-cta{display:flex; align-items:center; gap:14px;}
+  .menu-toggle{display:none; background:none; border:1px solid var(--border); border-radius:7px; padding:8px 10px; color:var(--text); cursor:pointer;}
+  .menu-toggle svg{display:block;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:88px 0 76px; position:relative;}
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--cyan); display:inline-flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px rgba(94,234,212,0.8);}
+
+  h1{
+    font-family:var(--mono); font-weight:800; font-size:46px; line-height:1.12;
+    margin:0 0 22px; letter-spacing:-0.01em;
+  }
+  h1 .accent{color:var(--cyan);}
+
+  .hero-sub{font-size:17.5px; color:var(--text-dim); max-width:520px; margin:0 0 28px;}
+
+  .meta-chips{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:34px;}
+  .meta-chip{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    border:1px solid var(--border); padding:7px 12px; border-radius:100px;
+    background:var(--ink-1);
+  }
+
+  .hero-ctas{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .hero-note{font-size:13px; color:var(--text-mute); font-family:var(--mono);}
+
+  /* Terminal signature element */
+  .terminal{
+    background:var(--ink-1); border:1px solid var(--border); border-radius:12px;
+    overflow:hidden; box-shadow:0 30px 70px -30px rgba(0,0,0,0.7);
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px; padding:12px 16px;
+    border-bottom:1px solid var(--border-soft); background:var(--ink-2);
+  }
+  .dot{width:10px; height:10px; border-radius:50%;}
+  .dot.r{background:#ef6461;} .dot.y{background:#f0b429;} .dot.g{background:#5eead4;}
+  .terminal-title{
+    font-family:var(--mono); font-size:12px; color:var(--text-mute); margin-left:8px;
+  }
+  .terminal-body{
+    padding:22px 20px 24px; font-family:var(--mono); font-size:13.2px; line-height:2;
+    min-height:330px;
+  }
+  .term-line{opacity:0; transform:translateY(4px); animation:termIn .35s ease forwards;}
+  .term-prompt{color:var(--cyan);}
+  .term-cmd{color:var(--text);}
+  .term-row{display:flex; justify-content:space-between; gap:14px; color:var(--text-dim);}
+  .term-label{color:var(--text);}
+  .status-pass{color:var(--cyan);}
+  .status-run{color:var(--amber);}
+  .status-pending{color:var(--text-mute);}
+  .term-summary{margin-top:10px; color:var(--text-dim); border-top:1px dashed var(--border); padding-top:14px;}
+  .term-cursor-line{color:var(--cyan);}
+  .blinker{display:inline-block; width:7px; height:14px; background:var(--cyan); margin-left:2px; animation:blink 1s steps(1) infinite; vertical-align:-2px;}
+
+  @keyframes termIn{to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Generic section chrome ---------- */
+  section{padding:96px 0;}
+  .section-border-top{border-top:1px solid var(--border-soft);}
+  .section-head{max-width:640px; margin:0 0 48px;}
+  .section-eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--text-mute); margin-bottom:14px; display:block;
+  }
+  h2{font-family:var(--mono); font-size:31px; font-weight:700; margin:0 0 14px; letter-spacing:-0.01em;}
+  .section-sub{color:var(--text-dim); font-size:16px; margin:0;}
+
+  /* ---------- Fit checklist ---------- */
+  .fit-wrap{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start;}
+  .check-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:18px;}
+  .check-list li{display:flex; align-items:flex-start; gap:14px; font-size:15.5px; color:var(--text);}
+  .check-mark{
+    flex:none; width:22px; height:22px; border-radius:6px; background:rgba(94,234,212,0.12);
+    border:1px solid var(--cyan-dim); color:var(--cyan); display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-family:var(--mono); margin-top:1px;
+  }
+  .fit-note{
+    margin-top:26px; font-family:var(--mono); font-size:13.5px; color:var(--text-mute);
+    border-left:2px solid var(--cyan-dim); padding-left:14px;
+  }
+  .fit-card{
+    background:var(--ink-1); border:1px solid var(--border); border-radius:12px; padding:30px;
+  }
+  .fit-card .stat{display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-soft); font-size:14.5px;}
+  .fit-card .stat:last-child{border-bottom:none;}
+  .fit-card .stat b{font-family:var(--mono); color:var(--cyan); font-weight:600;}
+
+  /* ---------- Build pipeline (weeks) ---------- */
+  .pipeline{
+    display:grid; grid-template-columns:repeat(8, 1fr); gap:10px;
+  }
+  .stage{
+    background:var(--ink-1); border:1px solid var(--border); border-radius:10px;
+    padding:16px 14px; position:relative; overflow:hidden;
+  }
+  .stage::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--border);
+  }
+  .stage.done::before{background:var(--cyan);}
+  .stage .wk{font-family:var(--mono); font-size:11px; color:var(--text-mute); letter-spacing:0.08em;}
+  .stage .wk-num{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--text); margin:6px 0 10px; display:block;}
+  .stage .wk-title{font-size:13px; color:var(--text-dim); line-height:1.4; min-height:52px;}
+  .stage .wk-icon{font-size:19px; margin-bottom:8px; display:block;}
+
+  /* ---------- Tracks ---------- */
+  .tracks{display:flex; flex-direction:column; gap:14px;}
+  .track{
+    display:grid; grid-template-columns:200px 1fr; gap:24px; align-items:start;
+    background:var(--ink-1); border:1px solid var(--border); border-radius:12px; padding:26px 28px;
+    border-left:3px solid var(--track-color, var(--cyan));
+  }
+  .track-meta .track-week{font-family:var(--mono); font-size:12px; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.08em;}
+  .track-meta .track-name{font-family:var(--mono); font-weight:700; font-size:17px; margin-top:6px; color:var(--track-color, var(--cyan));}
+  .tag-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    font-size:13px; color:var(--text-dim); background:var(--ink-2); border:1px solid var(--border-soft);
+    padding:6px 12px; border-radius:100px;
+  }
+
+  /* ---------- Tech stack ---------- */
+  .stack-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  .stack-card{background:var(--ink-1); border:1px solid var(--border); border-radius:12px; padding:24px;}
+  .stack-card h3{font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-mute); margin:0 0 16px; font-weight:600;}
+  .stack-card .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip2{font-family:var(--mono); font-size:12.5px; padding:6px 11px; border-radius:6px; background:var(--ink-2); border:1px solid var(--border-soft); color:var(--text);}
+
+  /* ---------- Achieve ---------- */
+  .achieve-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  .achieve-item{
+    display:flex; gap:14px; align-items:flex-start; background:var(--ink-1);
+    border:1px solid var(--border); border-radius:10px; padding:20px;
+  }
+
+  /* ---------- Instructor ---------- */
+  .instructor{
+    display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start;
+    background:var(--ink-1); border:1px solid var(--border); border-radius:16px; padding:44px;
+  }
+  .avatar{
+    width:200px; height:200px; border-radius:14px; background:var(--ink-3);
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:56px; font-weight:700; color:var(--cyan);
+  }
+  .instructor-name{font-family:var(--mono); font-size:23px; font-weight:700; margin:22px 0 4px;}
+  .instructor-role{color:var(--text-mute); font-size:13.5px; font-family:var(--mono);}
+  .instructor-bio p{color:var(--text-dim); font-size:15.5px; margin:0 0 16px;}
+  .cred-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
+  .cred{font-family:var(--mono); font-size:12.5px; color:var(--cyan); background:rgba(94,234,212,0.08); border:1px solid var(--cyan-dim); padding:6px 12px; border-radius:100px;}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--border-soft);}
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; color:var(--text);
+    font-family:var(--sans); font-size:16.5px; font-weight:600; padding:22px 0;
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:20px;
+  }
+  .faq-q .ind{font-family:var(--mono); color:var(--cyan); font-size:18px; transition:transform .2s ease; flex:none;}
+  .faq-item.open .ind{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .28s ease;}
+  .faq-a p{color:var(--text-dim); font-size:15.5px; margin:0 0 22px; max-width:640px;}
+
+  /* ---------- Final CTA ---------- */
+  .final-cta{
+    text-align:center; background:linear-gradient(180deg, var(--ink-1), var(--ink));
+    border:1px solid var(--border); border-radius:20px; padding:72px 40px;
+  }
+  .final-cta h2{font-size:34px;}
+  .final-cta p{color:var(--text-dim); font-size:17px; max-width:520px; margin:0 auto 34px;}
+
+  /* Apply / lead form */
+  .apply-panel{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+  }
+  .form-card{
+    background:var(--ink-1); border:1px solid var(--border); border-radius:14px; padding:32px;
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-mute); margin-bottom:8px;}
+  .field input, .field select{
+    width:100%; background:var(--ink-2); border:1px solid var(--border); border-radius:7px;
+    padding:12px 14px; color:var(--text); font-family:var(--sans); font-size:14.5px;
+  }
+  .field input:focus, .field select:focus{border-color:var(--cyan-dim);}
+  .form-success{display:none; text-align:center; padding:20px 0;}
+  .form-success.show{display:block;}
+  .form-success .ok{font-family:var(--mono); color:var(--cyan); font-size:15px;}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--border-soft); padding:48px 0 36px;}
+  .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;}
+  .footer-links{display:flex; gap:26px; flex-wrap:wrap;}
+  .footer-links a{font-size:13.5px; color:var(--text-mute); text-decoration:none;}
+  .footer-links a:hover{color:var(--text-dim);}
+  .copyright{font-family:var(--mono); font-size:12.5px; color:var(--text-mute);}
+
+  /* ---------- Chatbot ---------- */
+  .chat-launcher{
+    position:fixed; bottom:26px; right:26px; z-index:200;
+    font-family:var(--mono); font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:10px;
+    background:var(--cyan); color:#06201c; border:none; border-radius:100px;
+    padding:14px 20px; cursor:pointer; box-shadow:0 12px 30px rgba(94,234,212,0.25);
+    transition:transform .15s ease;
+  }
+  .chat-launcher:hover{transform:translateY(-2px);}
+  .chat-launcher .pulse{width:8px; height:8px; border-radius:50%; background:#06201c; animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  .chat-panel{
+    position:fixed; bottom:96px; right:26px; z-index:200;
+    width:380px; max-width:calc(100vw - 40px); height:520px; max-height:calc(100vh - 140px);
+    background:var(--ink-1); border:1px solid var(--border); border-radius:14px;
+    display:none; flex-direction:column; overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.8);
+  }
+  .chat-panel.open{display:flex;}
+  .chat-head{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
+    background:var(--ink-2); border-bottom:1px solid var(--border-soft);
+  }
+  .chat-head-title{font-family:var(--mono); font-size:12.5px; color:var(--text-dim); display:flex; align-items:center; gap:8px;}
+  .chat-head-title .dot{width:8px; height:8px; border-radius:50%; background:var(--cyan);}
+  .chat-close{background:none; border:none; color:var(--text-mute); cursor:pointer; font-size:16px; padding:4px;}
+  .chat-body{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; font-size:13.8px;}
+  .msg{max-width:88%; padding:10px 13px; border-radius:9px; line-height:1.55;}
+  .msg.bot{background:var(--ink-2); border:1px solid var(--border-soft); align-self:flex-start; font-family:var(--sans);}
+  .msg.user{background:rgba(94,234,212,0.12); border:1px solid var(--cyan-dim); align-self:flex-end; font-family:var(--sans); color:var(--text);}
+  .msg.bot .tag{font-family:var(--mono); font-size:10.5px; color:var(--cyan); display:block; margin-bottom:4px; letter-spacing:0.06em;}
+  .chat-suggest{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px;}
+  .sugg-btn{
+    font-family:var(--mono); font-size:11.5px; background:var(--ink-2); border:1px solid var(--border-soft);
+    color:var(--text-dim); padding:6px 10px; border-radius:100px; cursor:pointer;
+  }
+  .sugg-btn:hover{border-color:var(--cyan-dim); color:var(--text);}
+  .chat-input-row{
+    display:flex; align-items:center; gap:8px; padding:12px 14px; border-top:1px solid var(--border-soft);
+    background:var(--ink-2);
+  }
+  .chat-input-row .prompt-sign{font-family:var(--mono); color:var(--cyan); font-size:13px;}
+  .chat-input-row input{
+    flex:1; background:none; border:none; outline:none; color:var(--text);
+    font-family:var(--mono); font-size:13.5px;
+  }
+  .chat-send{background:none; border:none; color:var(--cyan); cursor:pointer; font-family:var(--mono); font-size:13px; font-weight:700;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .terminal{order:-1;}
+    .fit-wrap{grid-template-columns:1fr; gap:36px;}
+    .pipeline{grid-template-columns:repeat(4, 1fr);}
+    .stack-grid{grid-template-columns:repeat(2,1fr);}
+    .achieve-grid{grid-template-columns:1fr;}
+    .instructor{grid-template-columns:1fr; padding:32px;}
+    .avatar{margin:0 auto;}
+    .apply-panel{grid-template-columns:1fr;}
+    .track{grid-template-columns:1fr;}
+  }
+  @media (max-width: 680px){
+    nav.links{display:none;}
+    .menu-toggle{display:inline-flex;}
+    h1{font-size:32px;}
+    .pipeline{grid-template-columns:repeat(2, 1fr);}
+    section{padding:64px 0;}
+    .hero{padding:52px 0 48px;}
+    .chat-panel{right:14px; left:14px; width:auto;}
+    .chat-launcher{right:16px; bottom:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand"><span class="cursor"></span>ENGINEERING ACADEMY</a>
+    <nav class="links">
+      <a href="#curriculum">Curriculum</a>
+      <a href="#outcomes">Outcomes</a>
+      <a href="#instructor">Instructor</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#apply" class="btn btn-primary">Apply Now</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5H16M2 9H16M2 13.5H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Live Cohort · 8 Weeks · Engineering-First</span>
+        <h1>Build <span class="accent">Production-Ready</span> AI Applications in 8 Weeks</h1>
+        <p class="hero-sub">Become an AI-ready software engineer by building real-world AI applications — not toy demos. One project, evolved week over week, from prompt to production.</p>
+        <div class="meta-chips">
+          <span class="meta-chip">🎥 Live Cohort</span>
+          <span class="meta-chip">💻 Hands-on</span>
+          <span class="meta-chip">🏗️ Capstone Project</span>
+          <span class="meta-chip">🎯 Portfolio Focused</span>
+        </div>
+        <div class="hero-ctas">
+          <a href="#apply" class="btn btn-primary">Apply for the Next Cohort →</a>
+          <span class="hero-note">No prior AI experience required</span>
+        </div>
+      </div>
+
+      <div class="terminal" id="heroTerminal">
+        <div class="terminal-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="terminal-title">build.log — engineering-academy</span>
+        </div>
+        <div class="terminal-body" id="termBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IS THIS FOR YOU -->
+  <section class="section-border-top" id="for-you">
+    <div class="wrap fit-wrap">
+      <div>
+        <span class="section-eyebrow">Fit check</span>
+        <h2>Is this program for you?</h2>
+        <ul class="check-list">
+          <li><span class="check-mark">✓</span> You're a software engineer curious about AI</li>
+          <li><span class="check-mark">✓</span> You want to build AI applications, not just use ChatGPT</li>
+          <li><span class="check-mark">✓</span> You want practical skills you can apply at work</li>
+          <li><span class="check-mark">✓</span> You want a portfolio project that stands out in interviews</li>
+        </ul>
+        <p class="fit-note">$ prerequisite --check<br>&gt; No prior AI experience required.</p>
+      </div>
+      <div class="fit-card">
+        <div class="stat"><span>Format</span><b>Live, cohort-based</b></div>
+        <div class="stat"><span>Duration</span><b>8 weeks</b></div>
+        <div class="stat"><span>Weekly commitment</span><b>~9 hours</b></div>
+        <div class="stat"><span>Deliverable</span><b>1 deployed AI app</b></div>
+        <div class="stat"><span>Prior AI experience</span><b>Not required</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU'LL BUILD -->
+  <section class="section-border-top" id="curriculum">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">What you'll build</span>
+        <h2>One application. Evolved for 8 weeks.</h2>
+        <p class="section-sub">You won't build eight throwaway projects — you'll take a single AI application from a weekend prototype to a production deployment, adding real capability every week.</p>
+      </div>
+      <div class="pipeline">
+        <div class="stage done"><span class="wk-icon">🤖</span><span class="wk">WEEK 1</span><span class="wk-num">01</span><span class="wk-title">AI Chat Assistant</span></div>
+        <div class="stage done"><span class="wk-icon">📄</span><span class="wk">WEEK 2</span><span class="wk-num">02</span><span class="wk-title">AI Resume Analyzer</span></div>
+        <div class="stage done"><span class="wk-icon">💬</span><span class="wk">WEEK 3</span><span class="wk-num">03</span><span class="wk-title">AI Assistant Platform</span></div>
+        <div class="stage done"><span class="wk-icon">📚</span><span class="wk">WEEK 4</span><span class="wk-num">04</span><span class="wk-title">Enterprise Knowledge Assistant (RAG)</span></div>
+        <div class="stage"><span class="wk-icon">🤖</span><span class="wk">WEEK 5</span><span class="wk-num">05</span><span class="wk-title">AI Research Agent</span></div>
+        <div class="stage"><span class="wk-icon">⚡</span><span class="wk">WEEK 6</span><span class="wk-num">06</span><span class="wk-title">Production Features</span></div>
+        <div class="stage"><span class="wk-icon">☁️</span><span class="wk">WEEK 7</span><span class="wk-num">07</span><span class="wk-title">Cloud Deployment</span></div>
+        <div class="stage"><span class="wk-icon">🚀</span><span class="wk">WEEK 8</span><span class="wk-num">08</span><span class="wk-title">Production-Ready AI Application</span></div>
+      </div>
+      <p class="fit-note" style="margin-top:28px;">By the end of the program, you'll have a complete project to showcase on GitHub and in interviews.</p>
+    </div>
+  </section>
+
+  <!-- WHAT YOU'LL LEARN -->
+  <section class="section-border-top">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">Curriculum</span>
+        <h2>What you'll learn</h2>
+        <p class="section-sub">Five tracks, taught in the order production teams actually need them.</p>
+      </div>
+      <div class="tracks">
+        <div class="track" style="--track-color:#5eead4;">
+          <div class="track-meta"><span class="track-week">Week 1</span><div class="track-name">Foundations</div></div>
+          <div class="tag-row">
+            <span class="tag">LLMs</span><span class="tag">Prompt Engineering</span><span class="tag">Embeddings</span><span class="tag">AI APIs</span>
+          </div>
+        </div>
+        <div class="track" style="--track-color:#7bd88f;">
+          <div class="track-meta"><span class="track-week">Weeks 2–3</span><div class="track-name">AI Application Development</div></div>
+          <div class="tag-row">
+            <span class="tag">Architecture</span><span class="tag">Function Calling</span><span class="tag">Backend APIs</span><span class="tag">Security</span><span class="tag">Observability</span>
+          </div>
+        </div>
+        <div class="track" style="--track-color:#f0b429;">
+          <div class="track-meta"><span class="track-week">Week 4</span><div class="track-name">AI With Your Data</div></div>
+          <div class="tag-row">
+            <span class="tag">RAG</span><span class="tag">Vector Databases</span><span class="tag">Retrieval</span><span class="tag">Evaluation</span>
+          </div>
+        </div>
+        <div class="track" style="--track-color:#f0914f;">
+          <div class="track-meta"><span class="track-week">Week 5</span><div class="track-name">AI Agents</div></div>
+          <div class="tag-row">
+            <span class="tag">Agents</span><span class="tag">MCP</span><span class="tag">Tool Calling</span><span class="tag">Workflows</span>
+          </div>
+        </div>
+        <div class="track" style="--track-color:#ef6461;">
+          <div class="track-meta"><span class="track-week">Weeks 6–8</span><div class="track-name">Production AI</div></div>
+          <div class="tag-row">
+            <span class="tag">Testing</span><span class="tag">Monitoring</span><span class="tag">Docker</span><span class="tag">Cloud</span><span class="tag">CI/CD</span><span class="tag">Deployment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="section-border-top">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">Tooling</span>
+        <h2>Technologies you'll use</h2>
+      </div>
+      <div class="stack-grid">
+        <div class="stack-card">
+          <h3>AI</h3>
+          <div class="chips"><span class="chip2">OpenAI</span><span class="chip2">Claude</span><span class="chip2">Gemini</span></div>
+        </div>
+        <div class="stack-card">
+          <h3>Frameworks</h3>
+          <div class="chips"><span class="chip2">LangChain</span><span class="chip2">LangGraph</span><span class="chip2">MCP</span></div>
+        </div>
+        <div class="stack-card">
+          <h3>Backend</h3>
+          <div class="chips"><span class="chip2">Spring Boot</span><span class="chip2">FastAPI</span></div>
+        </div>
+        <div class="stack-card">
+          <h3>Cloud</h3>
+          <div class="chips"><span class="chip2">Docker</span><span class="chip2">GitHub</span><span class="chip2">GitHub Actions</span><span class="chip2">Vector DB</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES -->
+  <section class="section-border-top" id="outcomes">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">Outcomes</span>
+        <h2>What you'll achieve</h2>
+      </div>
+      <div class="achieve-grid">
+        <div class="achieve-item"><span class="check-mark">✓</span><span>Build production-ready AI applications</span></div>
+        <div class="achieve-item"><span class="check-mark">✓</span><span>Master RAG &amp; AI agents</span></div>
+        <div class="achieve-item"><span class="check-mark">✓</span><span>Deploy AI applications to the cloud</span></div>
+        <div class="achieve-item"><span class="check-mark">✓</span><span>Build a portfolio-worthy project</span></div>
+        <div class="achieve-item"><span class="check-mark">✓</span><span>Become an AI-ready software engineer</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR -->
+  <section class="section-border-top" id="instructor">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">Who's teaching</span>
+        <h2>Meet your instructor</h2>
+      </div>
+      <div class="instructor">
+        <div>
+          <div class="avatar">AK</div>
+          <div class="instructor-name">Amit Kumar</div>
+          <div class="instructor-role">Software Engineer · 15+ Years</div>
+          <div class="cred-row">
+            <span class="cred">Backend Engineering</span>
+            <span class="cred">Distributed Systems</span>
+            <span class="cred">Search Platforms</span>
+            <span class="cred">Cloud-Native</span>
+          </div>
+        </div>
+        <div class="instructor-bio">
+          <p>With over 15 years of software engineering experience, Amit has designed and built enterprise-grade systems across backend engineering, distributed computing, search platforms, and cloud-native applications.</p>
+          <p>Today, he focuses on applying AI to solve real software engineering problems — and on helping developers build the practical AI skills that companies actually value.</p>
+          <p>In this cohort, Amit shares not just how AI works, but how experienced engineering teams design, build, test, deploy, and maintain AI applications in production. If you're looking for a practical, engineering-first approach to AI, this program is designed for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section-border-top" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-eyebrow">FAQ</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div id="faqList">
+        <div class="faq-item">
+          <button class="faq-q">Do I need AI experience? <span class="ind">+</span></button>
+          <div class="faq-a"><p>No. We'll start from the fundamentals and build up to production-ready AI systems.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How much time should I spend each week? <span class="ind">+</span></button>
+          <div class="faq-a"><p>Around 9 hours, including live sessions, coding, and assignments.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Will I build real projects? <span class="ind">+</span></button>
+          <div class="faq-a"><p>Yes. You'll build and deploy one production-ready AI application over the 8 weeks.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Who is this cohort taught by? <span class="ind">+</span></button>
+          <div class="faq-a"><p>Amit Kumar, a software engineer with 15+ years of experience across backend engineering, distributed systems, search platforms, and cloud-native applications, now focused on applying AI to real engineering problems.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLY -->
+  <section class="section-border-top" id="apply">
+    <div class="wrap apply-panel">
+      <div>
+        <span class="section-eyebrow">Ready to Become an AI Engineer?</span>
+        <h2>Stop watching tutorials.<br>Start building production-ready AI applications.</h2>
+        <p class="section-sub">Apply for the next cohort — seats are limited to keep every session hands-on and interactive.</p>
+      </div>
+      <div class="form-card">
+        <form id="applyForm" action="https://formsubmit.co/hellotoamitcs03@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="New Engineering Academy application">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <!-- honeypot field to cut down on spam bots -->
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <!-- helps FormSubmit verify the origin when browsers send a stricter Referrer-Policy -->
+          <input type="hidden" name="_url" id="formUrl" value="">
+
+          <div class="field">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="Name" required placeholder="Your name">
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input type="email" id="email" name="Email" required placeholder="you@company.com">
+          </div>
+          <div class="field">
+            <label for="exp">Years of engineering experience</label>
+            <select id="exp" name="Experience">
+              <option>0–2 years</option>
+              <option>2–5 years</option>
+              <option>5–10 years</option>
+              <option>10+ years</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="applySubmitBtn">Apply for the Next Cohort →</button>
+          <p id="applyError" style="display:none; color:var(--red); font-family:var(--mono); font-size:12.5px; margin:12px 0 0;">Something went wrong sending your application. Please try again, or email hellotoamitcs03@gmail.com directly.</p>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <p class="ok">$ application received ✓</p>
+          <p style="color:var(--text-dim); font-size:14px;">Thanks — we'll reach out with next steps and cohort dates shortly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <a href="#top" class="brand"><span class="cursor"></span>ENGINEERING ACADEMY</a>
+    <div class="footer-links">
+      <a href="#curriculum">Curriculum</a>
+      <a href="#outcomes">Outcomes</a>
+      <a href="#instructor">Instructor</a>
+      <a href="#faq">FAQ</a>
+      <a href="#apply">Apply</a>
+    </div>
+    <div class="copyright">© 2026 Engineering Academy. Taught by Amit Kumar.</div>
+  </div>
+</footer>
+
+<!-- Chatbot -->
+<button class="chat-launcher" id="chatLauncher"><span class="pulse"></span> ask-academy</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div class="chat-head-title"><span class="dot"></span> ask-academy — bash</div>
+    <button class="chat-close" id="chatClose">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-suggest" id="chatSuggest"></div>
+  <div class="chat-input-row">
+    <span class="prompt-sign">$</span>
+    <input type="text" id="chatInput" placeholder="Ask about the curriculum, price, schedule..." autocomplete="off">
+    <button class="chat-send" id="chatSend">RUN</button>
+  </div>
+</div>
+
+<script>
+// ---------- Mobile nav ----------
+document.getElementById('menuToggle').addEventListener('click', function(){
+  var links = document.querySelector('nav.links');
+  var visible = links.style.display === 'flex';
+  links.style.display = visible ? 'none' : 'flex';
+  links.style.cssText += visible ? '' : 'position:absolute; top:66px; left:0; right:0; background:var(--ink-1); flex-direction:column; padding:20px 28px; border-bottom:1px solid var(--border-soft); gap:18px;';
+});
+
+// ---------- FAQ accordion ----------
+document.querySelectorAll('.faq-item').forEach(function(item){
+  var btn = item.querySelector('.faq-q');
+  var body = item.querySelector('.faq-a');
+  btn.addEventListener('click', function(){
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 40 + 'px';
+    }
+  });
+});
+
+// ---------- Apply form: real submission via FormSubmit.co ----------
+(function(){
+  var form = document.getElementById('applyForm');
+  var btn = document.getElementById('applySubmitBtn');
+  var errorEl = document.getElementById('applyError');
+  var urlField = document.getElementById('formUrl');
+  if(urlField) urlField.value = window.location.href;
+
+  if(window.location.protocol === 'file:'){
+    errorEl.textContent = 'This form needs to be opened from a real web address (http/https) to send mail — it won\'t work when the file is just double-clicked open. Host it (even for free, e.g. Netlify/GitHub Pages) and try from that URL.';
+    errorEl.style.display = 'block';
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    var originalLabel = btn.textContent;
+    btn.textContent = 'Sending…';
+
+    var data = new FormData(form);
+    // Ask FormSubmit's AJAX endpoint for a JSON response instead of a redirect,
+    // so we can keep the visitor on this page.
+    var ajaxAction = form.action.replace('https://formsubmit.co/', 'https://formsubmit.co/ajax/');
+
+    fetch(ajaxAction, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: data
+    })
+    .then(function(res){
+      if(!res.ok) throw new Error('Request failed: ' + res.status);
+      return res.json();
+    })
+    .then(function(){
+      form.style.display = 'none';
+      document.getElementById('formSuccess').classList.add('show');
+    })
+    .catch(function(){
+      // Fall back to a normal (non-AJAX) form submit, which still works
+      // even if the AJAX endpoint is blocked or not yet activated.
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      errorEl.style.display = 'block';
+    });
+  });
+})();
+
+// ---------- Hero terminal animation ----------
+(function(){
+  var body = document.getElementById('termBody');
+  var lines = [
+    {html:'<span class="term-prompt">$</span> <span class="term-cmd">engineering-academy run --cohort=next</span>', delay:0},
+    {html:'<div class="term-row"><span class="term-label">Week 1 · AI Chat Assistant</span><span class="status-pass">✓ build passed</span></div>', delay:1},
+    {html:'<div class="term-row"><span class="term-label">Week 2 · AI Resume Analyzer</span><span class="status-pass">✓ build passed</span></div>', delay:2},
+    {html:'<div class="term-row"><span class="term-label">Week 3 · AI Assistant Platform</span><span class="status-pass">✓ build passed</span></div>', delay:3},
+    {html:'<div class="term-row"><span class="term-label">Week 4 · Knowledge Assistant (RAG)</span><span class="status-pass">✓ build passed</span></div>', delay:4},
+    {html:'<div class="term-row"><span class="term-label">Week 5 · AI Research Agent</span><span class="status-run">⣾ building…</span></div>', delay:5},
+    {html:'<div class="term-row"><span class="term-label">Week 6 · Production Features</span><span class="status-pending">pending</span></div>', delay:6},
+    {html:'<div class="term-row"><span class="term-label">Week 7 · Cloud Deployment</span><span class="status-pending">pending</span></div>', delay:7},
+    {html:'<div class="term-row"><span class="term-label">Week 8 · Production-Ready App</span><span class="status-pending">pending</span></div>', delay:8},
+    {html:'<div class="term-summary">4 / 8 stages complete — deploying <span class="term-cursor-line">you</span> to production<span class="blinker"></span></div>', delay:9.2}
+  ];
+  function play(){
+    body.innerHTML = '';
+    lines.forEach(function(l){
+      var div = document.createElement('div');
+      div.className = 'term-line';
+      div.innerHTML = l.html;
+      div.style.animationDelay = (l.delay * 0.32) + 's';
+      body.appendChild(div);
+    });
+  }
+  var played = false;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting && !played){ played = true; play(); }
+    });
+  }, {threshold:0.3});
+  obs.observe(document.getElementById('heroTerminal'));
+})();
+
+// ---------- Chatbot: local knowledge-base retrieval ----------
+(function(){
+  var launcher = document.getElementById('chatLauncher');
+  var panel = document.getElementById('chatPanel');
+  var closeBtn = document.getElementById('chatClose');
+  var bodyEl = document.getElementById('chatBody');
+  var input = document.getElementById('chatInput');
+  var sendBtn = document.getElementById('chatSend');
+  var suggestEl = document.getElementById('chatSuggest');
+
+  var KB = [
+    {
+      kws:['what','program','about','course','engineering academy','overview','cohort'],
+      tag:'overview',
+      a:"Engineering Academy is an 8-week live cohort called \"AI for Software Engineers.\" You build one real AI application, evolving it week by week, until it's deployed to production — taught by Amit Kumar, a software engineer with 15+ years of experience."
+    },
+    {
+      kws:['duration','long','weeks','how many weeks','length','schedule','time commitment','hours','per week','9 hours'],
+      tag:'schedule',
+      a:"The program runs for 8 weeks, live, with about 9 hours a week covering live sessions, coding, and assignments."
+    },
+    {
+      kws:['experience','beginner','prior','prerequisite','need to know','background','required','new to ai'],
+      tag:'prerequisites',
+      a:"No prior AI experience is required. The program starts from the fundamentals — LLMs, prompt engineering, embeddings — and builds up to production-ready AI systems."
+    },
+    {
+      kws:['build','project','capstone','portfolio','what will i build','app'],
+      tag:'what you build',
+      a:"You'll build one AI application and evolve it across all 8 weeks: an AI Chat Assistant → Resume Analyzer → AI Assistant Platform → Enterprise Knowledge Assistant (RAG) → AI Research Agent → Production Features → Cloud Deployment → a final Production-Ready AI Application you can show in interviews."
+    },
+    {
+      kws:['curriculum','learn','topics','syllabus','week 1','week 2','week 3','week 4','week 5','rag','agents','llm','embeddings'],
+      tag:'curriculum',
+      a:"The curriculum has 5 tracks: Foundations (Week 1 — LLMs, prompt engineering, embeddings, AI APIs), AI Application Development (Weeks 2–3 — architecture, function calling, backend APIs, security, observability), AI With Your Data (Week 4 — RAG, vector databases, retrieval, evaluation), AI Agents (Week 5 — agents, MCP, tool calling, workflows), and Production AI (Weeks 6–8 — testing, monitoring, Docker, cloud, CI/CD, deployment)."
+    },
+    {
+      kws:['technology','tech stack','tools','openai','claude','gemini','langchain','langgraph','spring boot','fastapi','docker','stack'],
+      tag:'tech stack',
+      a:"You'll work with OpenAI, Claude, and Gemini for AI; LangChain, LangGraph, and MCP as frameworks; Spring Boot or FastAPI on the backend; and Docker, GitHub, GitHub Actions, and vector databases for cloud deployment."
+    },
+    {
+      kws:['outcome','achieve','after the course','get out of it','result','benefit'],
+      tag:'outcomes',
+      a:"By the end, you'll be able to build production-ready AI applications, master RAG and AI agents, deploy AI applications to the cloud, and walk away with a portfolio-worthy project — becoming an AI-ready software engineer."
+    },
+    {
+      kws:['instructor','who teaches','amit','amit kumar','teacher','trainer','mentor'],
+      tag:'instructor',
+      a:"The cohort is taught by Amit Kumar, a software engineer with 15+ years of experience designing enterprise-grade systems across backend engineering, distributed computing, search platforms, and cloud-native applications. He now focuses on applying AI to real engineering problems."
+    },
+    {
+      kws:['price','cost','fee','payment','how much','money','₹','$'],
+      tag:'pricing',
+      a:"Pricing and cohort dates are shared when you apply. Use the \"Apply for the Next Cohort\" button and the team will follow up with current pricing and available seats."
+    },
+    {
+      kws:['apply','join','enroll','sign up','register','how to start'],
+      tag:'how to apply',
+      a:"Scroll to the Apply section (or click any \"Apply for the Next Cohort\" button) and submit your name and email — the team will reach out with next steps and cohort dates."
+    },
+    {
+      kws:['real project','deploy','production','live','actually build','toy demo'],
+      tag:'real projects',
+      a:"Yes — this isn't toy demos. You'll build and deploy one production-ready AI application over the 8 weeks, with real practices: testing, monitoring, CI/CD, and cloud deployment."
+    }
+  ];
+
+  var STOP = ['the','is','a','an','to','for','of','in','on','and','do','i','you','will','be','what','how','can','are','with'];
+
+  function tokenize(s){
+    return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(function(t){
+      return t && STOP.indexOf(t) === -1;
+    });
+  }
+
+  function bestMatch(query){
+    var qTokens = tokenize(query);
+    if(qTokens.length === 0) return null;
+    var best = null, bestScore = 0;
+    KB.forEach(function(entry){
+      var score = 0;
+      entry.kws.forEach(function(kw){
+        var kwTokens = tokenize(kw);
+        var hit = kwTokens.every(function(kt){ return query.toLowerCase().indexOf(kt) !== -1; });
+        if(hit) score += kwTokens.length;
+        kwTokens.forEach(function(kt){
+          if(qTokens.indexOf(kt) !== -1) score += 1;
+        });
+      });
+      if(score > bestScore){ bestScore = score; best = entry; }
+    });
+    return bestScore > 0 ? best : null;
+  }
+
+  function addMsg(text, who, tag){
+    var div = document.createElement('div');
+    div.className = 'msg ' + who;
+    if(tag){
+      var t = document.createElement('span');
+      t.className = 'tag';
+      t.textContent = tag.toUpperCase();
+      div.appendChild(t);
+    }
+    var p = document.createElement('div');
+    p.textContent = text;
+    div.appendChild(p);
+    bodyEl.appendChild(div);
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+  }
+
+  function respond(query){
+    addMsg(query, 'user');
+    var match = bestMatch(query);
+    setTimeout(function(){
+      if(match){
+        addMsg(match.a, 'bot', match.tag);
+      } else {
+        addMsg("I couldn't find that in the program details on this page. Try asking about the curriculum, schedule, prerequisites, tech stack, instructor, or how to apply — or use the Apply form and the team can answer directly.", 'bot', 'not found');
+      }
+    }, 260);
+  }
+
+  var suggestions = ['What will I build?', 'Do I need AI experience?', 'What tech stack is used?', 'Who is the instructor?', 'How do I apply?'];
+  suggestions.forEach(function(s){
+    var b = document.createElement('button');
+    b.className = 'sugg-btn';
+    b.textContent = s;
+    b.addEventListener('click', function(){ respond(s); });
+    suggestEl.appendChild(b);
+  });
+
+  launcher.addEventListener('click', function(){
+    panel.classList.add('open');
+    if(bodyEl.children.length === 0){
+      addMsg("Hey — I'm the Engineering Academy assistant. Ask me anything about the curriculum, schedule, tech stack, or how to apply.", 'bot', 'ask-academy');
+    }
+    input.focus();
+  });
+  closeBtn.addEventListener('click', function(){ panel.classList.remove('open'); });
+
+  function submit(){
+    var v = input.value.trim();
+    if(!v) return;
+    respond(v);
+    input.value = '';
+  }
+  sendBtn.addEventListener('click', submit);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+})();
+</script>
+</body>
+</html>
